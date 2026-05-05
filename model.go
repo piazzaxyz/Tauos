@@ -42,6 +42,7 @@ type Model struct {
 	focus Focus
 	state AppState
 
+	blockScroll  int
 	newBlockType BlockType
 	input        textinput.Model
 	textarea     textarea.Model
@@ -383,6 +384,16 @@ func (m Model) addNewBlock(bt BlockType) (Model, tea.Cmd) {
 	m.currentBlock = insertAt
 	m.newBlockType = bt
 
+	// scroll to new block if out of view
+	availH := m.height - 6
+	approxVisible := availH / 2
+	if approxVisible < 1 {
+		approxVisible = 1
+	}
+	if m.currentBlock >= m.blockScroll+approxVisible {
+		m.blockScroll = max(0, m.currentBlock-approxVisible+1)
+	}
+
 	if bt == BlockDivider {
 		m.state = StateNormal
 		savePages(m.pages)
@@ -533,6 +544,7 @@ func (m *Model) moveSidebarUp() {
 	if m.currentPage > 0 {
 		m.currentPage--
 		m.currentBlock = 0
+		m.blockScroll = 0
 		if m.currentPage < m.sideOffset {
 			m.sideOffset = m.currentPage
 		}
@@ -543,6 +555,7 @@ func (m *Model) moveSidebarDown() {
 	if m.currentPage < len(m.pages)-1 {
 		m.currentPage++
 		m.currentBlock = 0
+		m.blockScroll = 0
 		visibleLines := m.height - 6
 		if visibleLines < 1 {
 			visibleLines = 1
@@ -556,6 +569,9 @@ func (m *Model) moveSidebarDown() {
 func (m *Model) moveBlockUp() {
 	if m.currentBlock > 0 {
 		m.currentBlock--
+		if m.currentBlock < m.blockScroll {
+			m.blockScroll = m.currentBlock
+		}
 	}
 }
 
@@ -566,6 +582,16 @@ func (m *Model) moveBlockDown() {
 	page := m.pages[m.currentPage]
 	if m.currentBlock < len(page.Blocks)-1 {
 		m.currentBlock++
+		// scroll down if the new block would be outside the visible area
+		// header section = 4 lines, ~2 lines per block
+		availH := m.height - 6
+		approxVisible := availH / 2
+		if approxVisible < 1 {
+			approxVisible = 1
+		}
+		if m.currentBlock >= m.blockScroll+approxVisible {
+			m.blockScroll++
+		}
 	}
 }
 
@@ -577,6 +603,9 @@ func (m *Model) swapBlockUp() {
 	i := m.currentBlock
 	page.Blocks[i], page.Blocks[i-1] = page.Blocks[i-1], page.Blocks[i]
 	m.currentBlock--
+	if m.currentBlock < m.blockScroll {
+		m.blockScroll = m.currentBlock
+	}
 	savePages(m.pages)
 }
 
@@ -591,6 +620,14 @@ func (m *Model) swapBlockDown() {
 	}
 	page.Blocks[i], page.Blocks[i+1] = page.Blocks[i+1], page.Blocks[i]
 	m.currentBlock++
+	availH := m.height - 6
+	approxVisible := availH / 2
+	if approxVisible < 1 {
+		approxVisible = 1
+	}
+	if m.currentBlock >= m.blockScroll+approxVisible {
+		m.blockScroll++
+	}
 	savePages(m.pages)
 }
 
@@ -619,6 +656,9 @@ func (m *Model) deleteCurrentBlock() {
 	page.Blocks = append(page.Blocks[:m.currentBlock], page.Blocks[m.currentBlock+1:]...)
 	if m.currentBlock >= len(page.Blocks) {
 		m.currentBlock = max(0, len(page.Blocks)-1)
+	}
+	if m.blockScroll > m.currentBlock {
+		m.blockScroll = m.currentBlock
 	}
 	savePages(m.pages)
 }

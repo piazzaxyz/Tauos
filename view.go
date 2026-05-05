@@ -144,7 +144,7 @@ func (m Model) viewStatus() string {
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 func (m Model) viewSidebar(height int) string {
-	contentW := sidebarWidth - 2 // subtract border
+	contentW := sidebarWidth
 
 	var rows []string
 
@@ -253,7 +253,8 @@ func (m Model) viewContent(height int) string {
 	}
 
 	// Blocks
-	for i, block := range page.Blocks {
+	for i := m.blockScroll; i < len(page.Blocks); i++ {
+		block := page.Blocks[i]
 		selected := i == m.currentBlock && m.focus == FocusContent
 
 		// Show textarea when editing this block
@@ -333,7 +334,11 @@ func (m Model) renderBlock(block Block, selected bool, innerW int) []string {
 		}
 		rendered := renderInlineMarkdown(content, style)
 		for _, seg := range splitLines(rendered) {
-			lines = append(lines, pad+prefix+lipgloss.NewStyle().Width(innerW-3).Render(seg))
+			segStyle := lipgloss.NewStyle().Width(innerW - 3)
+			if selected {
+				segStyle = segStyle.Background(colorOverlay)
+			}
+			lines = append(lines, pad+prefix+segStyle.Render(seg))
 		}
 
 	case BlockTodo:
@@ -380,6 +385,9 @@ func (m Model) renderBlock(block Block, selected bool, innerW int) []string {
 		bar := quoteBarStyle.Render("│ ")
 		for _, seg := range segs {
 			rendered := renderInlineMarkdown(seg, style)
+			if selected {
+				rendered = lipgloss.NewStyle().Background(colorOverlay).Width(innerW - 2).Render(rendered)
+			}
 			lines = append(lines, pad+bar+rendered)
 		}
 
@@ -411,6 +419,9 @@ func (m Model) renderBlock(block Block, selected bool, innerW int) []string {
 		}
 		for _, seg := range splitLines(content) {
 			rendered := renderInlineMarkdown(seg, style)
+			if selected {
+				rendered = lipgloss.NewStyle().Background(colorOverlay).Width(innerW).Render(rendered)
+			}
 			lines = append(lines, pad+rendered)
 		}
 	}
