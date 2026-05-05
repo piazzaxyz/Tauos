@@ -12,8 +12,12 @@ type BlockType int
 
 const (
 	BlockText    BlockType = iota
-	BlockHeading BlockType = iota
-	BlockTodo    BlockType = iota
+	BlockHeading           // ## heading
+	BlockTodo              // checkbox
+	BlockCode              // code block
+	BlockQuote             // blockquote
+	BlockDivider           // horizontal rule
+	BlockCard              // markdown card / topic
 )
 
 type Block struct {
@@ -68,10 +72,13 @@ func defaultPages() []Page {
 			ID:    newID(),
 			Title: "Bem-vindo",
 			Blocks: []Block{
-				{ID: newID(), Type: BlockHeading, Content: "Bem-vindo ao Tau"},
-				{ID: newID(), Type: BlockText, Content: "Um espaço simples para suas anotações e tarefas."},
+				{ID: newID(), Type: BlockHeading, Content: "Bem-vindo ao **Tauos**"},
+				{ID: newID(), Type: BlockText, Content: "Um espaço minimalista para notas e tarefas. Suporta *markdown* inline."},
+				{ID: newID(), Type: BlockQuote, Content: "Pressione `a` para adicionar um bloco, `e` para editar."},
+				{ID: newID(), Type: BlockDivider},
 				{ID: newID(), Type: BlockTodo, Content: "Explorar o app"},
 				{ID: newID(), Type: BlockTodo, Content: "Criar minha primeira nota", Done: true},
+				{ID: newID(), Type: BlockCard, Content: "## Integrações\n\nConfigure `~/.config/tauos/config.json` com seus tokens do **Notion** e **GitHub** para enviar blocos com `ctrl+n` e `ctrl+g`."},
 			},
 		},
 		{
@@ -79,7 +86,8 @@ func defaultPages() []Page {
 			Title: "Ideias",
 			Blocks: []Block{
 				{ID: newID(), Type: BlockHeading, Content: "Minhas Ideias"},
-				{ID: newID(), Type: BlockText, Content: "Escreva aqui suas ideias e pensamentos..."},
+				{ID: newID(), Type: BlockText, Content: "Escreva aqui suas ideias em *markdown*..."},
+				{ID: newID(), Type: BlockCode, Content: "// Exemplo de código\nfmt.Println(\"Hello, Tauos!\")"},
 			},
 		},
 	}

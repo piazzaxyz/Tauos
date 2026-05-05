@@ -2,7 +2,7 @@ package main
 
 import "github.com/charmbracelet/lipgloss"
 
-// Catppuccin Mocha palette
+// Catppuccin Mocha
 var (
 	colorBg      = lipgloss.Color("#1e1e2e")
 	colorSurface = lipgloss.Color("#181825")
@@ -10,29 +10,32 @@ var (
 	colorText    = lipgloss.Color("#cdd6f4")
 	colorSubtext = lipgloss.Color("#a6adc8")
 	colorMuted   = lipgloss.Color("#6c7086")
-	colorAccent  = lipgloss.Color("#cba6f7")
+	colorAccent  = lipgloss.Color("#cba6f7") // mauve
 	colorBlue    = lipgloss.Color("#89b4fa")
 	colorGreen   = lipgloss.Color("#a6e3a1")
 	colorRed     = lipgloss.Color("#f38ba8")
+	colorYellow  = lipgloss.Color("#f9e2af")
+	colorTeal    = lipgloss.Color("#94e2d5")
+	colorPeach   = lipgloss.Color("#fab387")
 	colorBorder  = lipgloss.Color("#45475a")
+	colorCodeBg  = lipgloss.Color("#1e1e2e")
+	colorCardBg  = lipgloss.Color("#1e1e2e")
 
 	sidebarItemStyle = lipgloss.NewStyle().
-				Foreground(colorSubtext).
-				PaddingLeft(1)
+				Foreground(colorSubtext)
 
 	sidebarItemActiveStyle = lipgloss.NewStyle().
-				Foreground(colorAccent).
-				PaddingLeft(1)
+				Foreground(colorAccent)
 
 	sidebarItemSelectedStyle = lipgloss.NewStyle().
-					Foreground(colorAccent).
-					Background(colorOverlay).
-					Bold(true).
-					PaddingLeft(1)
+					Foreground(colorBg).
+					Background(colorAccent).
+					Bold(true)
 
 	titleStyle = lipgloss.NewStyle().
 			Foreground(colorAccent).
-			Bold(true)
+			Bold(true).
+			MarginBottom(0)
 
 	headingBlockStyle = lipgloss.NewStyle().
 				Foreground(colorBlue).
@@ -50,14 +53,46 @@ var (
 				Foreground(colorText).
 				Background(colorOverlay)
 
+	codeBlockStyle = lipgloss.NewStyle().
+			Foreground(colorYellow).
+			Background(colorCodeBg)
+
+	codeBlockSelectedStyle = lipgloss.NewStyle().
+				Foreground(colorYellow).
+				Background(colorOverlay)
+
+	quoteBarStyle = lipgloss.NewStyle().
+			Foreground(colorTeal)
+
+	quoteTextStyle = lipgloss.NewStyle().
+			Foreground(colorTeal).
+			Italic(true)
+
+	quoteTextSelectedStyle = lipgloss.NewStyle().
+				Foreground(colorTeal).
+				Background(colorOverlay).
+				Italic(true)
+
+	cardStyle = lipgloss.NewStyle().
+			Background(colorCardBg).
+			BorderStyle(lipgloss.RoundedBorder()).
+			BorderForeground(colorBorder).
+			Padding(0, 1)
+
+	cardSelectedStyle = lipgloss.NewStyle().
+				Background(colorCardBg).
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(colorAccent).
+				Padding(0, 1)
+
 	todoUncheckedStyle = lipgloss.NewStyle().
 				Foreground(colorSubtext)
 
 	todoDoneStyle = lipgloss.NewStyle().
 			Foreground(colorMuted)
 
-	checkboxOn  = lipgloss.NewStyle().Foreground(colorGreen).Render("☑")
-	checkboxOff = lipgloss.NewStyle().Foreground(colorMuted).Render("☐")
+	checkboxOn  = lipgloss.NewStyle().Foreground(colorGreen).Render("●")
+	checkboxOff = lipgloss.NewStyle().Foreground(colorMuted).Render("○")
 
 	keyHintKey = lipgloss.NewStyle().
 			Foreground(colorAccent).
@@ -73,8 +108,15 @@ var (
 	errorStyle = lipgloss.NewStyle().
 			Foreground(colorRed)
 
+	successStyle = lipgloss.NewStyle().
+			Foreground(colorGreen)
+
 	dimStyle = lipgloss.NewStyle().
 			Foreground(colorMuted)
 
-	_ = colorRed // used via errorStyle
+	inlineCodeStyle = lipgloss.NewStyle().
+			Foreground(colorYellow).
+			Background(colorSurface)
+
+	_ = colorPeach // reserved
 )
